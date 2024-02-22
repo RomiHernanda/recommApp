@@ -50,28 +50,34 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateListView() {
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_list_item_1,
-            chosenItemList
-        )
-        listView.adapter = adapter
+        chosenItemList.clear()
+        chosenItemList.add(homeViewModel.chosenItemList.value.orEmpty())
+        chosenItemAdapter.notifyDataSetChanged()
     }
 
-    private fun prepInputData(chosenItemsList: List<String>): FloatArray {
-        val arrayToIdMap = mapOf(
-            "51" to 51051000101000100051f,
-            "72" to 51051000101000100072f,
-            "71" to 51051000101000100071f,
-            "02" to 51051000101000100002f,
-            "73" to 51051000101000100073f,
-            "01" to 51051000101000100001f,
-            "48" to 51051000101000100048f
-        )
-        //val numInputArray = chosenItemsList.map { arrayToIdMap[it] ?: "" }.toFloatArray()
-        val floatList = chosenItemsList.map { arrayToIdMap[it] ?: -1.0f }
-        val numInputArray = FloatArray(floatList.size) {floatList[it] }
-        return numInputArray
-    }
+//    private fun updateListView() {
+//        val adapter = ArrayAdapter(
+//            requireContext(),
+//            android.R.layout.simple_list_item_1,
+//            chosenItemList
+//        )
+//        listView.adapter = adapter
+//    }
+
+//    private fun prepInputData(chosenItemsList: List<String>): FloatArray {
+//        val arrayToIdMap = mapOf(
+//            "51" to 51051000101000100051f,
+//            "72" to 51051000101000100072f,
+//            "71" to 51051000101000100071f,
+//            "02" to 51051000101000100002f,
+//            "73" to 51051000101000100073f,
+//            "01" to 51051000101000100001f,
+//            "48" to 51051000101000100048f
+//        )
+//        //val numInputArray = chosenItemsList.map { arrayToIdMap[it] ?: "" }.toFloatArray()
+//        val floatList = chosenItemsList.map { arrayToIdMap[it] ?: -1.0f }
+//        val numInputArray = FloatArray(floatList.size) {floatList[it] }
+//        return numInputArray
+//    }
 
 }
