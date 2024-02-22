@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.RecommendationFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="18dp"
+        android:text="Recommendation"
+        android:textSize="25dp"/>
+
+    <ListView
+        android:id="@+id/recomId_listview"
+        android:layout_width="338dp"
+        android:layout_height="338dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="204dp"
+        android:background="@drawable/outline" />
+
+    <Button
+        android:id="@+id/recomBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="61dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="51dp"
+        android:layout_marginRight="153dp"
+        android:layout_marginBottom="121dp"
+        android:text="recommend"
+        android:textSize="11sp"/>
+
+
+</RelativeLayout>

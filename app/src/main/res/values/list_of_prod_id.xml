@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="product_ids">
+        <item>51</item>
+        <item>72</item>
+        <item>71</item>
+        <item>02</item>
+        <item>73</item>
+        <item>01</item>
+        <item>48</item>
+
+    </string-array>
+
+</resources>
