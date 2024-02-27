@@ -17,8 +17,9 @@
         android:text="Recommendation"
         android:textSize="25dp"/>
 
-    <ListView
-        android:id="@+id/recomId_listview"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recomList_recyclerview"
         android:layout_width="338dp"
         android:layout_height="338dp"
         android:layout_alignParentLeft="true"
@@ -27,10 +28,10 @@
         android:layout_marginTop="150dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="204dp"
-        android:background="@drawable/outline" />
+        android:background="@drawable/outline"/>
 
     <Button
-        android:id="@+id/recomBtn"
+        android:id="@+id/backBtn"
         android:layout_width="wrap_content"
         android:layout_height="61dp"
         android:layout_alignParentRight="true"
@@ -38,7 +39,7 @@
         android:layout_marginLeft="51dp"
         android:layout_marginRight="153dp"
         android:layout_marginBottom="121dp"
-        android:text="recommend"
+        android:text="back"
         android:textSize="11sp"/>
 
 

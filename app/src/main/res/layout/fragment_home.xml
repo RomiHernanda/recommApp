@@ -48,11 +48,35 @@
         android:layout_height="338dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginLeft="34dp"
         android:layout_marginTop="150dp"
-        android:layout_marginBottom="95dp"
-        android:background="@drawable/outline"/>
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="135dp"
+        android:background="@drawable/outline" />
+
+    <Button
+        android:id="@+id/recomBtnTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="61dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="51dp"
+        android:layout_marginRight="153dp"
+        android:layout_marginBottom="48dp"
+        android:text="recommend"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/resetBtn"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="51dp"
+        android:layout_marginRight="33dp"
+        android:layout_marginBottom="68dp"
+        android:text="reset"
+        android:textSize="10sp" />
 
 
 </RelativeLayout>
