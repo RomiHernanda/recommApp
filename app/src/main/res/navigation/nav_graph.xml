@@ -15,6 +15,9 @@
             android:id="@+id/action_homeFragment_to_recommendationFragment"
             app:destination="@id/recommendationFragment">
         </action>
+        <action
+            android:id="@+id/action_homeFragment_to_homeFragmentSecond"
+            app:destination="@id/homeFragmentSecond" />
 
     </fragment>
     <fragment
@@ -25,10 +28,38 @@
 
         <argument
             android:name="inferenceResult"
-            app:argType="float[]" />
+            app:argType="float" />
+<!--        <argument-->
+<!--            android:name="productId"-->
+<!--            app:argType="string" />-->
+<!--        <argument-->
+<!--            android:name="productName"-->
+<!--            app:argType="string" />-->
 
         <action
             android:id="@+id/action_recommendationFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/homeFragmentSecond"
+        android:name="com.example.recommendationapp.fragments.HomeFragmentSecond"
+        android:label="fragment_homeadvanced"
+        tools:layout="@layout/fragment_homeadvanced" >
+        <action
+            android:id="@+id/action_homeFragmentSecond_to_recommendationFragmentSecond"
+            app:destination="@id/recommendationFragmentSecond" />
+        <action
+            android:id="@+id/action_homeFragmentSecond_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recommendationFragmentSecond"
+        android:name="com.example.recommendationapp.fragments.RecommendationFragmentSecond"
+        android:label="fragment_recommendationadvanced"
+        tools:layout="@layout/fragment_recommendationadvanced" >
+        <argument
+            android:name="inferenceResultSecond"
+            app:argType="float" />
+    </fragment>
+
 </navigation>

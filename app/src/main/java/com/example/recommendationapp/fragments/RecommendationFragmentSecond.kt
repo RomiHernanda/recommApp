@@ -5,30 +5,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recommendationapp.R
-import com.example.recommendationapp.RecommendationAdapter
-import com.example.recommendationapp.data.ProductMappingRepo
-import com.example.recommendationapp.data.ProductsViewModel
-import org.tensorflow.lite.Interpreter
-import java.io.FileInputStream
-import java.nio.ByteBuffer
-import java.nio.channels.FileChannel
+import com.example.recommendationapp.RecommendationAdapterSecond
+import com.example.recommendationapp.data.ProductListSecond
+import com.example.recommendationapp.data.ProductRepoSecond
 
-class RecommendationFragment : Fragment() {
+class RecommendationFragmentSecond : Fragment() {
 
     //private lateinit var recomList : ListView
-    private lateinit var recomAdapter : RecommendationAdapter
+    private lateinit var recomAdapter : RecommendationAdapterSecond
     private lateinit var backButton : Button
 
-    private val productMappings = ProductMappingRepo
+    private val productMappings = ProductRepoSecond
     //private lateinit var recomViewModel : ProductsViewModel
     //private lateinit var tfliteInter : Interpreter
 
@@ -43,14 +36,22 @@ class RecommendationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_recommendation, container, false)
+        val view = inflater.inflate(R.layout.fragment_recommendationadvanced, container, false)
 
-        val args: RecommendationFragmentArgs by navArgs()
-        val inferenceResult = args.inferenceResult.toString()
+        val args: RecommendationFragmentSecondArgs by navArgs()
+        val inferenceResult = args.inferenceResultSecond.toString()
         val recommendations = inferenceResult.map { productId ->
             val productIdStr = productId.toString()
-            val productName = productMappings.getProdName(productIdStr) ?: "Unknown Product"
-            Pair(productName, productIdStr)
+            val productName = productMappings.getProdName(productIdStr)
+            val productCat = productMappings.getProdCat(productIdStr)
+            val productRat = productMappings.getProdRat(productIdStr)
+            val productPop = productMappings.getProdPop(productIdStr)
+
+            if (productName != null && productCat != null && productRat != null && productPop != null) {
+                ProductListSecond(productIdStr, productName, productCat, productRat, productPop)
+            } else {
+                null
+            }
         }
 
         //Manual
@@ -62,14 +63,14 @@ class RecommendationFragment : Fragment() {
 
 
         //recomViewModel = ViewModelProvider(requireActivity()).get(ProductsViewModel::class.java)
-        val recommendationRecyclerView = view.findViewById<RecyclerView>(R.id.recomList_recyclerview)
-        recomAdapter = RecommendationAdapter(recommendations)
+        val recommendationRecyclerView = view.findViewById<RecyclerView>(R.id.recomList_recyclerviewAdv)
+        recomAdapter = RecommendationAdapterSecond(recommendations)
 
         recommendationRecyclerView.adapter = recomAdapter
         recommendationRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         //recomList = view.findViewById(R.id.recomId_listview)
-        backButton = view.findViewById(R.id.backBtn)
+        backButton = view.findViewById(R.id.backBtnAdv)
         backButton.setOnClickListener {
             findNavController().navigateUp()
 //            val chosenItemList : List<String> = recomViewModel.chosenItemList.value?.split(",") ?: emptyList()

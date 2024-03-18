@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.HomeFragment">
+    tools:context=".fragments.HomeFragmentSecond">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -15,11 +15,11 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="18dp"
-        android:text="Home"
+        android:text="Advanced Home"
         android:textSize="25dp" />
 
     <Button
-        android:id="@+id/addBtn"
+        android:id="@+id/addBtnAdv"
         android:layout_width="67dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -31,7 +31,7 @@
         android:textSize="11sp" />
 
     <Spinner
-        android:id="@+id/prodId_spinner"
+        android:id="@+id/prodId_spinnerAdv"
         android:layout_width="213dp"
         android:layout_height="37dp"
         android:layout_alignParentLeft="true"
@@ -43,7 +43,7 @@
         android:background="@drawable/outline"/>
 
     <ListView
-        android:id="@+id/prodId_listview"
+        android:id="@+id/prodId_listviewAdv"
         android:layout_width="338dp"
         android:layout_height="338dp"
         android:layout_alignParentLeft="true"
@@ -55,7 +55,7 @@
         android:background="@drawable/outline" />
 
     <Button
-        android:id="@+id/recomBtnTemp"
+        android:id="@+id/recomBtnTempAdv"
         android:layout_width="wrap_content"
         android:layout_height="61dp"
         android:layout_alignParentRight="true"
@@ -67,7 +67,7 @@
         android:textSize="11sp" />
 
     <Button
-        android:id="@+id/resetBtn"
+        android:id="@+id/resetBtnAdv"
         android:layout_width="62dp"
         android:layout_height="60dp"
         android:layout_alignParentRight="true"
@@ -79,15 +79,15 @@
         android:textSize="10sp" />
 
     <Button
-        android:id="@+id/advBtn"
+        android:id="@+id/backBtnNorm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="51dp"
-        android:layout_marginRight="36dp"
-        android:layout_marginBottom="618dp"
-        android:text="ADV"
+        android:layout_marginRight="35dp"
+        android:layout_marginBottom="635dp"
+        android:text="NML"
         android:textSize="11sp" />
 
 

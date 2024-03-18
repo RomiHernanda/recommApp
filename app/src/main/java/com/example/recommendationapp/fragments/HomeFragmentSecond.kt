@@ -15,10 +15,12 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.recommendationapp.R
 import com.example.recommendationapp.data.ProductList
+import com.example.recommendationapp.data.ProductListSecond
 import com.example.recommendationapp.data.ProductMappingRepo
+import com.example.recommendationapp.data.ProductRepoSecond
 import com.example.recommendationapp.ml.Danarecmodel
 import com.example.recommendationapp.ml.Danarecmodelshortened
-import com.example.recommendationapp.ml.Danarecomfrequency
+import com.example.recommendationapp.ml.Danarecomfeatures
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
@@ -27,19 +29,19 @@ import java.nio.ByteBuffer
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 
-class HomeFragment : Fragment() {
+class HomeFragmentSecond : Fragment() {
 
     private lateinit var spinner : Spinner
     private lateinit var listView : ListView
     private lateinit var addButton : Button
     private lateinit var recomButton: Button
     private lateinit var resetButton: Button
-    private lateinit var advButton: Button
+    private lateinit var backButtonNormal : Button
 
-    private lateinit var chosenItemList : MutableList<ProductList>
-    private lateinit var chosenProductIdList: MutableList<ProductList>
-    private lateinit var chosenItemAdapter: ArrayAdapter<ProductList>
-    private lateinit var productList : ProductMappingRepo
+    private lateinit var chosenItemList : MutableList<ProductListSecond>
+    private lateinit var chosenProductIdList: MutableList<ProductListSecond>
+    private lateinit var chosenItemAdapter: ArrayAdapter<ProductListSecond>
+    private lateinit var productList : ProductRepoSecond
     private lateinit var interpreter : Interpreter
 
     override fun onCreateView(
@@ -47,25 +49,24 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_homeadvanced, container, false)
 
         //These 3 only for runInference() (w/ interpreter)
 //        val modelBuffer = loadModelFile()
 //        val options = Interpreter.Options()
 //        interpreter = Interpreter(modelBuffer, options)
 
-        spinner = view.findViewById(R.id.prodId_spinner)
-        listView = view.findViewById(R.id.prodId_listview)
-        addButton = view.findViewById(R.id.addBtn)
-        recomButton = view.findViewById(R.id.recomBtnTemp)
-        resetButton = view.findViewById(R.id.resetBtn)
-        advButton = view.findViewById(R.id.advBtn)
-
+        spinner = view.findViewById(R.id.prodId_spinnerAdv)
+        listView = view.findViewById(R.id.prodId_listviewAdv)
+        addButton = view.findViewById(R.id.addBtnAdv)
+        recomButton = view.findViewById(R.id.recomBtnTempAdv)
+        resetButton = view.findViewById(R.id.resetBtnAdv)
+        backButtonNormal = view.findViewById(R.id.backBtnNorm)
 
         chosenItemList = mutableListOf()
         chosenProductIdList = mutableListOf()
 
-        productList = ProductMappingRepo
+        productList = ProductRepoSecond
 
         val productNames = productList.getProdNames()
         val adapter = ArrayAdapter(
@@ -86,22 +87,25 @@ class HomeFragment : Fragment() {
         addButton.setOnClickListener {
             val selectedItemName = spinner.selectedItem.toString()
             val productId = productList.getProdId(selectedItemName)
-            if (productId != null) {
-                val productList = ProductList(productId, selectedItemName)
+            val productCat = productList.getProdCat(selectedItemName)
+            val productRat = productList.getProdRat(selectedItemName)
+            val productPop = productList.getProdPop(selectedItemName)
+            if (productId != null && productCat != null && productRat != null && productPop != null) {
+                val productList = ProductListSecond(productId, selectedItemName, productCat, productRat, productPop)
                 chosenItemList.add(productList)
-                chosenProductIdList.add(ProductList(productId))
+                chosenProductIdList.add(ProductListSecond(productId, productCat, productRat, productPop))
                 chosenItemAdapter.notifyDataSetChanged()
             }
 
         }
 
-        advButton.setOnClickListener {
+        backButtonNormal.setOnClickListener {
             if (chosenItemList.isNotEmpty() || chosenProductIdList.isNotEmpty()){
                 chosenProductIdList.clear()
                 chosenItemList.clear()
                 chosenItemAdapter.notifyDataSetChanged()
             }
-            val action = HomeFragmentDirections.actionHomeFragmentToHomeFragmentSecond()
+            val action = HomeFragmentSecondDirections.actionHomeFragmentSecondToHomeFragment()
             findNavController().navigate(action)
         }
 
@@ -112,41 +116,15 @@ class HomeFragment : Fragment() {
         }
 
         recomButton.setOnClickListener {
-            if (chosenItemList.isNotEmpty() || chosenProductIdList.isNotEmpty()) {
-                val productFrequencies = chosenProductIdList.groupingBy { it.productId }.eachCount()
-                // Find the most frequent product ID
-                val freqProductId = productFrequencies.maxByOrNull { it.value }?.key
-
-                // Get the frequency of the most frequent product ID
-                val freqFrequency = productFrequencies[freqProductId] ?: 0
-
-//                val productIds = productFrequencies.keys.toList()
-//                val frequencies = productFrequencies.values.map { it.toFloat() }
-
-
-                val inferenceResult = runInferenceShort(freqProductId!!, freqFrequency.toFloat())
-                //val inferenceResultArray = inferenceResult.toTypedArray()
-                val action = HomeFragmentDirections.actionHomeFragmentToRecommendationFragment(inferenceResult)
+            if (chosenItemList.isNotEmpty()) {
+                val inferenceResult = runInferenceShort(chosenProductIdList)
+//                val inferenceResultArray = inferenceResult.toTypedArray()
+                val action = HomeFragmentSecondDirections.actionHomeFragmentSecondToRecommendationFragmentSecond(inferenceResult)
                 findNavController().navigate(action)
             } else {
                 Toast.makeText(requireContext(), "Please select at least one item", Toast.LENGTH_SHORT).show()
             }
 
-//            if (chosenItemList.size >= 1) {
-//                //val inputArray = prepareInputData(chosenItemList) //for runInference
-//                val inputArray = chosenItemList.map { it.productId.toFloat() }.toFloatArray() //for runInferenceSec
-//                val inferenceResult = runInferenceSec(inputArray)
-//                val inferenceResultArray = inferenceResult.toTypedArray()
-//
-//                val action = HomeFragmentDirections.actionHomeFragmentToRecommendationFragment(inferenceResultArray)
-//
-////                val (mostFrequentProductId, mostFrequentProductName) = runInferencne(chosenItemList, productList)
-////                val action = HomeFragmentDirections.actionHomeFragmentToRecommendationFragment(mostFrequentProductId ?: "",
-////                    mostFrequentProductName ?: "Unknown Product")
-//                findNavController().navigate(action)
-//            } else {
-//                Toast.makeText(requireContext(), "Please select at least one item", Toast.LENGTH_SHORT).show()
-//            }
         }
 
         return view
@@ -246,110 +224,69 @@ class HomeFragment : Fragment() {
         return outputProductIds
     }
 
-    private fun runInferenceShort(productId: String, frequency: Float): Float {
-
+    private fun runInferenceShort(chosenProductList: List<ProductListSecond>): Float {
         // Create the TFLite model instance
-        val model = Danarecomfrequency.newInstance(requireContext())
+        val model = Danarecomfeatures.newInstance(requireContext())
 
-        // Prepare input data for inference
-        val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
-        inputFeature0.loadBuffer(ByteBuffer.allocateDirect(4).putFloat(productId.toFloat()).rewind() as ByteBuffer)
+        // Initialize lists to store input data
+        val inputFeatureBuffers = mutableListOf<TensorBuffer>()
 
-        val inputFeature1 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
-        inputFeature1.loadBuffer(ByteBuffer.allocateDirect(4).putFloat(frequency).rewind() as ByteBuffer)
+        // Prepare input data for each chosen product
+        for (product in chosenProductIdList) {
+            // Create input features for the chosen product
+            val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
+            inputFeature0.loadBuffer(ByteBuffer.allocateDirect(4).putFloat(product.productId.toFloat()).rewind() as ByteBuffer) // Assuming productId is Float
 
+            val inputFeature1 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
+            inputFeature1.loadBuffer(ByteBuffer.allocateDirect(4).putFloat(product.productCat.toFloat()).rewind() as ByteBuffer) // Assuming productCat is Float
+
+            val inputFeature2 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
+            inputFeature2.loadBuffer((ByteBuffer.allocateDirect(4).putFloat(product.productRating.toFloat()) as ByteBuffer).rewind() as ByteBuffer) // Assuming productRating is Float
+
+            val inputFeature3 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
+            inputFeature3.loadBuffer((ByteBuffer.allocateDirect(4).putFloat(product.productPopular.toFloat()) as ByteBuffer).rewind() as ByteBuffer) // Assuming productPopular is Float
+
+
+            // Add input features to the list
+            inputFeatureBuffers.add(inputFeature0)
+            inputFeatureBuffers.add(inputFeature1)
+            inputFeatureBuffers.add(inputFeature2)
+            inputFeatureBuffers.add(inputFeature3)
+        }
+
+        val inputFeature0 = inputFeatureBuffers[0]
+        val inputFeature1 = inputFeatureBuffers[1]
+        val inputFeature2 = inputFeatureBuffers[2]
+        val inputFeature3 = inputFeatureBuffers[3]
 
         // Runs model inference and gets result
-        val outputs = model.process(inputFeature0, inputFeature1)
+        val outputs = model.process(inputFeature0, inputFeature1, inputFeature2, inputFeature3)
         val outputFeature0 = outputs.outputFeature0AsTensorBuffer
 
         // Extract the recommended product ID from the output feature
-        val recommendedProductId = outputFeature0.floatArray[0]
+        val recommendedProductId = outputFeature0.floatArray[0] // Retain as Float
+
+
+//        for (inputFeatureBuffer in inputFeatureBuffers) {
+//            // Runs model inference and gets result
+//            val outputs = model.process(inputFeatureBuffer)
+//            val outputFeature0 = outputs.outputFeature0AsTensorBuffer
+//
+//            // Extract the recommended product ID from the output feature
+//            val recommendedProductId = outputFeature0.floatValue.toString() // Convert to String
+//
+//            // Add the recommended product ID to the list
+//            outputProductIds.add(recommendedProductId)
+//        }
 
         // Release model resources
         model.close()
 
         return recommendedProductId
+
     }
 
-    private fun runInferenceShorty(chosenProductList: List<ProductList>): List<String> {
-        val model = Danarecmodelshortened.newInstance(requireContext())
-
-//        val inputArrays = mutableListOf<FloatArray>()
-//
-//        for (product in chosenProductList) {
-//            val productId = product.productId.toFloat()
-//            inputArrays.add(floatArrayOf(productId))
-//        }
-
-        //val inputArrays = chosenProductList.map { floatArrayOf(it.productId.toFloat()) }.toTypedArray()
-        // Convert chosen product IDs to a float array
-        val inputFloatArray = chosenProductList.map { it.productId.toFloat() }.toFloatArray()
-
-        // Prepare input data for inference
-        val inputFeature = TensorBuffer.createFixedSize(intArrayOf(inputFloatArray.size,1), DataType.FLOAT32)
-        inputFeature.loadArray(inputFloatArray)
-//        for ((index, product) in chosenProductList.withIndex()) {
-//            //inputFeature.floatArray[index] = product.productId.toFloat()
-//            inputFeature.loadArray(floatArrayOf(product.productId.toFloat()), intArrayOf(1, index))
-//        }
-        // Load input data into the TensorBuffer
-//        chosenProductList.forEachIndexed { index, productList ->
-//            inputFeature.floatArray[index] = productList.productId.toFloat()
-//        }
-
-        // Perform inference with the input feature
-        val outputs = model.process(inputFeature)
-
-        // Get the output tensor containing probabilities
-        val outputFeature = outputs.outputFeature0AsTensorBuffer
-
-
-
-        // Convert the output tensor values to strings
-//        val outputValues = outputFeature.floatArray.map { it.toString() }
-        val recommendations = mutableListOf<String>()
-        for (i in 0 until outputFeature.flatSize) {
-            recommendations.add(outputFeature.floatArray[i].toString())
-        }
-
-        // Close the model
-        model.close()
-
-        return recommendations
-
-//        for (product in chosenProductList) {
-//            val inputFeature = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32) //other option : (1,1) instead of (1,product.productId.length)
-//            //inputFeature.loadArray(intArrayOf(product.productId.toInt()))
-//            //val productIdIndex = productIdToIndex(product.productId)
-//            //inputFeature.loadArray(floatArrayOf(product.productId.toFloat())) //original
-//            //inputFeature.loadArray(encodedInput)
-//            inputFeature.loadArray(floatArrayOf(product.productId.toFloat()))
-//
-//
-//            println("${product.productId.toFloat()} | ${product.productId}")
-//            //println("${product.productId.toDouble()} | ${product.productId}")
-//
-//            val outputs = model.process(inputFeature)
-//            val outputFeature = outputs.outputFeature0AsTensorBuffer
-//            println("Output tensor shape: ${outputFeature.shape.contentToString()}")
-//            println("Output tensor values: ${outputFeature.floatArray.contentToString()}")
-//            println("Output tensor values: $outputFeature")
-//
-//            val outputProductId = outputFeature.floatArray[0].toString()
-//            outputProductIds.add(outputProductId)
-////            val outputProductId = outputValue.toString()
-//            // Log the generated outputProductId for debugging
-//            Log.d("InferenceResult", "Generated Output Product ID: $outputProductId")
-//
-//        }
-//
-//        model.close()
-//
-//        return outputProductIds
-    }
-
-    private fun runInferenceShortTwo(context: Context, chosenProductList: List<ProductList>): List<String> {
+    private fun runInferenceShortTwo(context: Context, chosenProductList: List<ProductListSecond>): List<String> {
 //        val assetManager = context.assets
 //        val fileDescriptor = assetManager.openFd("danarecmodelshortened.tflite")
 //        val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
@@ -362,7 +299,7 @@ class HomeFragment : Fragment() {
 //        val interpreter = Interpreter(modelBuffer)
         // Load the TensorFlow Lite model
         val assetManager = context.assets
-        val modelInputStream = assetManager.open("danarecmodelshortened.tflite")
+        val modelInputStream = assetManager.open("danarecmodelshortened.tflite") //GANTI MODEL BARU
         val modelBuffer = modelInputStream.readBytes()
 
         val interpreter = Interpreter(ByteBuffer.wrap(modelBuffer))
@@ -371,6 +308,10 @@ class HomeFragment : Fragment() {
         val inputShape = interpreter.getInputTensor(0).shape()
         val inputBuffer = TensorBuffer.createFixedSize(inputShape, DataType.FLOAT32)
         val productIds = chosenProductList.map { it.productId.toFloat() }.toFloatArray()
+//        inputBuffer.loadArray(floatArrayOf(productIds.toFloat(),
+//            displacement.toFloat(),
+//            hp.toFloat(),weight.toFloat(),
+//            acceleration.toFloat(),year.toFloat(),europe,japan,usa))
         //inputBuffer.loadArray(floatArrayOf(0f)) // Assuming input is always 0 for this example
         inputBuffer.loadArray(productIds)
 
