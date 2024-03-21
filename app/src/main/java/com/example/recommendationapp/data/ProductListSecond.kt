@@ -1,6 +1,6 @@
 package com.example.recommendationapp.data
 
-data class ProductListSecond(val productId: String, val  productName : String, val productCat : String, val productRating : String, val productPopular : String ){
+data class ProductListSecond(val productId: String, val productName : String, val productCat : String, val productRating : String, val productPopular : String ){
     constructor(productId: String, productCat: String, productRating: String, productPopular: String) : this(productId, "",productCat,productRating,productPopular)
 }
 
@@ -44,6 +44,18 @@ object ProductRepoSecond {
 
     fun getProdPop(productId: String): String? {
         return ProductRepoSecond.productMappingsListSecond.find { it.productId == productId }?.productPopular
+    }
+
+    fun getProdCatAdd(productName: String): String? {
+        return ProductRepoSecond.productMappingsListSecond.find { it.productName == productName }?.productCat
+    }
+
+    fun getProdRatAdd(productName: String): String? {
+        return ProductRepoSecond.productMappingsListSecond.find { it.productName == productName }?.productRating
+    }
+
+    fun getProdPopAdd(productName: String): String? {
+        return ProductRepoSecond.productMappingsListSecond.find { it.productName == productName }?.productPopular
     }
 
     fun getProdName(productId: String): String {

@@ -1,13 +1,13 @@
 package com.example.recommendationapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -15,12 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recommendationapp.R
 import com.example.recommendationapp.RecommendationAdapter
+import com.example.recommendationapp.SharedViewModel
 import com.example.recommendationapp.data.ProductMappingRepo
-import com.example.recommendationapp.data.ProductsViewModel
-import org.tensorflow.lite.Interpreter
-import java.io.FileInputStream
-import java.nio.ByteBuffer
-import java.nio.channels.FileChannel
 
 class RecommendationFragment : Fragment() {
 
@@ -29,6 +25,10 @@ class RecommendationFragment : Fragment() {
     private lateinit var backButton : Button
 
     private val productMappings = ProductMappingRepo
+
+    private val sharedViewModel: SharedViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+    }
     //private lateinit var recomViewModel : ProductsViewModel
     //private lateinit var tfliteInter : Interpreter
 
@@ -37,6 +37,17 @@ class RecommendationFragment : Fragment() {
 //
 //        tfliteInter = Interpreter(loadModelFileFromAssets("danarecmodel.tflite"))
 //    }
+
+        private val probabilityToProductIdMap: Map<Pair<String?, Float>, String> = mapOf (
+        Pair("51", 0.044060796F) to "51",
+        Pair("72", 0.044060796F) to "72",
+        Pair("71", 0.044060796F) to "71",
+        Pair("73", 0.044060796F) to "73",
+        Pair("22", 0.044060796F) to "22",
+        Pair("11", 0.044060796F) to "11",
+        Pair("48", 0.044060796F) to "48"
+    )
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,11 +58,27 @@ class RecommendationFragment : Fragment() {
 
         val args: RecommendationFragmentArgs by navArgs()
         val inferenceResult = args.inferenceResult.toString()
+        val mostFrequentProdId = sharedViewModel.mostFrequentProductId
+        Log.d("InferenceResult", "Inference Result: $inferenceResult")
+        val recommendation: Pair<String, String>? = probabilityToProductIdMap[Pair(mostFrequentProdId, inferenceResult.toFloat())]?.let { productId ->
+            val productName = productMappings.getProdName(productId) ?: "Unknown Product"
+            Pair(productName, productId)
+        }
         val recommendations = inferenceResult.map { productId ->
             val productIdStr = productId.toString()
             val productName = productMappings.getProdName(productIdStr) ?: "Unknown Product"
             Pair(productName, productIdStr)
         }
+
+        val retrievedProductId = probabilityToProductIdMap[Pair(mostFrequentProdId, inferenceResult.toFloat())]
+
+
+//        // If a valid product ID is retrieved, display it as the recommendation
+//        retrievedProductId?.let { productId ->
+//            val productName = productMappings.getProdName(productId) ?: "Unknown Product"
+//            val recommendation = Pair(productName, productId)
+//            //displayRecommendation(recommendation)
+//        }
 
         //Manual
 //        val mostFrequentProductId = args.productId
@@ -59,14 +86,20 @@ class RecommendationFragment : Fragment() {
 //        recomAdapter = RecommendationAdapter(listOf("$mostFrequentProductName $mostFrequentProductId"))
 //        recommendationRecyclerView.adapter = recomAdapter
 //        recommendationRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        if (recommendation != null) {
+            val recommendationRecyclerView = view.findViewById<RecyclerView>(R.id.recomList_recyclerview)
+            recomAdapter = RecommendationAdapter(recommendation!!)
 
+            recommendationRecyclerView.adapter = recomAdapter
+            recommendationRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        }
+        else {
+            Toast.makeText(requireContext(), "Error: Recommendation not found", Toast.LENGTH_SHORT).show()
+
+        }
 
         //recomViewModel = ViewModelProvider(requireActivity()).get(ProductsViewModel::class.java)
-        val recommendationRecyclerView = view.findViewById<RecyclerView>(R.id.recomList_recyclerview)
-        recomAdapter = RecommendationAdapter(recommendations)
 
-        recommendationRecyclerView.adapter = recomAdapter
-        recommendationRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         //recomList = view.findViewById(R.id.recomId_listview)
         backButton = view.findViewById(R.id.backBtn)

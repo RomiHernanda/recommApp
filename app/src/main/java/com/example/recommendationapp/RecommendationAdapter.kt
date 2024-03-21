@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class RecommendationAdapter(private val recommendationList: List<Pair<String, String>>) : RecyclerView.Adapter<RecommendationAdapter.RecommendationViewHolder>() {
+class RecommendationAdapter(private val recommendedProduct: Pair<String, String>) : RecyclerView.Adapter<RecommendationAdapter.RecommendationViewHolder>() {
     inner class RecommendationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val productNameTextView: TextView = itemView.findViewById(R.id.prodNameTextView)
         val productIdTextView: TextView = itemView.findViewById(R.id.prodIdTextView)
@@ -21,15 +21,16 @@ class RecommendationAdapter(private val recommendationList: List<Pair<String, St
 //        val currentItem = recommendationList[position]
 //        // Split the current item to extract product name and ID
 //        val (productName, productId) = currentItem.split(" ")
-        val (productName, productId) = recommendationList[position] // Retrieve product name and ID from Pair
+        val (productName, productId) = recommendedProduct // Retrieve product name and ID from Pair
 
 
         holder.productNameTextView.text = productName
         holder.productIdTextView.text = productId
     }
 
-    override fun getItemCount() = recommendationList.size
+    //override fun getItemCount() = recommendationList.size
 
+    override fun getItemCount() = if (recommendedProduct != null) 1 else 0
 
 
 }

@@ -52,7 +52,9 @@
         android:layout_marginTop="150dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="135dp"
-        android:background="@drawable/outline" />
+        android:background="@drawable/outline"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp"/>
 
     <Button
         android:id="@+id/recomBtnTemp"
@@ -87,7 +89,7 @@
         android:layout_marginLeft="51dp"
         android:layout_marginRight="36dp"
         android:layout_marginBottom="618dp"
-        android:text="ADV"
+        android:text="ADVANCED"
         android:textSize="11sp" />
 
 
