@@ -18,8 +18,6 @@ import com.example.recommendationapp.R
 import com.example.recommendationapp.SharedViewModel
 import com.example.recommendationapp.data.ProductList
 import com.example.recommendationapp.data.ProductMappingRepo
-import com.example.recommendationapp.ml.Danarecmodel
-import com.example.recommendationapp.ml.Danarecmodelshortened
 import com.example.recommendationapp.ml.Danarecomfrequency
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
