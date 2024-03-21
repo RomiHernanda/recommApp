@@ -55,11 +55,6 @@ class HomeFragmentSecond : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_homeadvanced, container, false)
 
-        //These 3 only for runInference() (w/ interpreter)
-//        val modelBuffer = loadModelFile()
-//        val options = Interpreter.Options()
-//        interpreter = Interpreter(modelBuffer, options)
-
         spinner = view.findViewById(R.id.prodId_spinnerAdv)
         listView = view.findViewById(R.id.prodId_listviewAdv)
         addButton = view.findViewById(R.id.addBtnAdv)
@@ -157,16 +152,16 @@ class HomeFragmentSecond : Fragment() {
         // Creates inputs for reference.
         val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
         inputFeature0.loadBuffer(ByteBuffer.allocateDirect(4).putFloat(productId.toFloat()).rewind() as ByteBuffer)
-        //inputFeature0.loadArray(floatArrayOf(productId.toFloat()))
+
         val inputFeature1 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
         inputFeature1.loadBuffer(ByteBuffer.allocateDirect(4).putFloat(productCat.toFloat()).rewind() as ByteBuffer)
-        //inputFeature1.loadArray(floatArrayOf(productCat.toFloat()))
+
         val inputFeature2 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
         inputFeature2.loadBuffer(ByteBuffer.allocateDirect(4).putFloat(productRat.toFloat()).rewind() as ByteBuffer)
-        //inputFeature2.loadArray(floatArrayOf(productRat.toFloat()))
+
         val inputFeature3 = TensorBuffer.createFixedSize(intArrayOf(1, 1), DataType.FLOAT32)
         inputFeature3.loadBuffer(ByteBuffer.allocateDirect(4).putFloat(productPop.toFloat()).rewind() as ByteBuffer)
-        //inputFeature3.loadArray(floatArrayOf(productPop.toFloat()))
+
 
         // Runs model inference and gets result.
         val outputs = model.process(inputFeature0, inputFeature1, inputFeature2, inputFeature3)
@@ -185,7 +180,7 @@ class HomeFragmentSecond : Fragment() {
     }
 
 
-    //CONTOH PAKE TFLITE INTERPRETER (BUKAN TFLITE LIBRARY)
+    //Example for using TFLite Interpreter (NOT TFLite Library)
 //    private fun runInferenceShortTwo(context: Context, chosenProductList: List<ProductListSecond>): List<String> {
 //        // Load the TensorFlow Lite model
 //        val assetManager = context.assets
